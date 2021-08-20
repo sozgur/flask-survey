@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Survey-Lists{% endblock %}
+{% block content %}
+
+<h2>Survey List</h2>
+
+<div class="col-6">
+<form action="/" method="POST">
+    <select name="code" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+      {% for code,survey in surveys.items() %}
+        <option value="{{code}}">{{survey.title}}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Select</button>
+</form>
+</div>      
+{% endblock %}
