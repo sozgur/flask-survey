@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, flash
+from flask import Flask, request, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from surveys import surveys
 
@@ -11,7 +11,7 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 
-responses = []
+
 satisfaction_survey = surveys["satisfaction"]
 
 @app.route("/")
@@ -27,7 +27,7 @@ def home():
 def start():
     """ Start the survey """
 
-    responses = []
+    session["responses"] = []
     return redirect("/questions/0")
 
 
@@ -35,6 +35,7 @@ def start():
 def show_question(question_id):
     """ Show questions and answers """
     idx = int(question_id)
+    responses = session.get("responses")
     answered_count = len(responses)
     if answered_count != idx:
         flash("Invalid URL")
@@ -60,7 +61,9 @@ def answer():
         flash("Before go to next page, you must select your answer!")
         return redirect(f"/questions/{next_question_id-1}")
 
+    responses = session.get("responses", [])
     responses.append(answer)
+    session["responses"] = responses
    
     if len(satisfaction_survey.questions) == next_question_id:
         return redirect("/thanks")
